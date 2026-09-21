@@ -359,9 +359,11 @@ function handleFile(file) {
           const keys = Object.keys(row);
           const namaKey = keys.find((k) => k.toLowerCase().includes('nama'));
           const nomorKey = keys.find((k) => /nomor|hp|phone|whatsapp/i.test(k));
+          const linkKey = keys.find((k) => /link/i.test(k));
           return {
             nama: namaKey ? String(row[namaKey]).trim() : '',
-            nomor: nomorKey ? String(row[nomorKey]).trim() : ''
+            nomor: nomorKey ? String(row[nomorKey]).trim() : '',
+            link: linkKey ? String(row[linkKey]).trim() : ''
           };
         })
         .filter((c) => c.nama && c.nomor);
