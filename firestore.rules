@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // GANTI dengan email admin kamu — HARUS SAMA PERSIS dengan
+    // ADMIN_EMAIL di firebase-config.js
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.email == 'GANTI_DENGAN_EMAIL_ADMIN_KAMU@gmail.com';
+    }
+
+    function isApproved(uid) {
+      return exists(/databases/$(database)/documents/accountRequests/$(uid)) &&
+             get(/databases/$(database)/documents/accountRequests/$(uid)).data.status == 'approved';
+    }
+
+    // Data pendaftaran akun
+    match /accountRequests/{uid} {
+      // Orang boleh membuat pendaftarannya sendiri, tapi HARUS berstatus "pending"
+      // (tidak boleh langsung mengaku "approved" sendiri)
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.status == 'pending';
+
+      // Pemilik akun boleh melihat status pendaftarannya sendiri; admin boleh lihat semua
+      allow get: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+
+      // Hanya admin yang boleh mengubah status (menyetujui/menolak)
+      allow update, delete: if isAdmin();
+    }
+
+    // Data aplikasi (kontak, template pesan) milik tiap pengguna
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null
+                          && request.auth.uid == uid
+                          && (isApproved(uid) || isAdmin());
+    }
+  }
+}
