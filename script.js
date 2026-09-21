@@ -442,14 +442,15 @@ function renderContactSummary() {
 
 // ---------- UNDUH CONTOH FORMAT ----------
 downloadTemplateBtn.addEventListener('click', () => {
-  const csvContent = 'Nama,NomorHP\nBudi Santoso,081234567890\nSiti Aminah,6281298765432\n';
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'contoh-daftar-tamu.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  const data = [
+    { No: 1, Nama: 'Budi Santoso', NomorHP: '081234567890' },
+    { No: 2, Nama: 'Siti Aminah', NomorHP: '6281298765432' }
+  ];
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  worksheet['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 16 }]; // lebar kolom biar rapi
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Tamu');
+  XLSX.writeFile(workbook, 'contoh-daftar-tamu.xlsx');
 });
 
 // ---------- NOMOR & PESAN ----------
