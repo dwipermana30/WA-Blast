@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Undangan Pernikahan — Pengirim WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== LAYAR LOGIN ===================== -->
+  <section id="loginScreen" class="screen login-screen">
+    <div class="login-panel">
+      <div class="login-mark">✦</div>
+      <h1>Undangan, disiapkan<br />dengan tenang.</h1>
+      <p class="login-lede">Masuk untuk mulai menyiapkan pesan undangan pernikahan ke daftar tamu kamu.</p>
+
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" autocomplete="username" required autofocus />
+        </div>
+        <div class="field">
+          <label for="password">Kata sandi</label>
+          <input type="password" id="password" autocomplete="current-password" required minlength="6" />
+        </div>
+        <div class="field" id="confirmPasswordField" hidden>
+          <label for="confirmPassword">Ulangi kata sandi</label>
+          <input type="password" id="confirmPassword" autocomplete="new-password" minlength="6" />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">Masuk</button>
+        <p id="loginError" class="error-text" role="alert"></p>
+        <p id="loginInfo" class="info-text" role="status"></p>
+      </form>
+
+      <p class="login-toggle">
+        <span id="toggleModeText">Belum punya akun?</span>
+        <button type="button" id="toggleModeBtn" class="btn-link">Daftar di sini</button>
+      </p>
+
+      <p class="login-note">Akun baru perlu disetujui admin dulu sebelum bisa dipakai untuk masuk.</p>
+    </div>
+  </section>
+
+  <!-- ===================== POP-UP: MENUNGGU / DITOLAK ===================== -->
+  <div id="pendingModal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <div class="login-mark">✦</div>
+      <h2 id="pendingTitle">Menunggu persetujuan</h2>
+      <p class="login-lede" id="pendingMessage">
+        Akunmu sudah terdaftar dan sedang menunggu persetujuan admin.
+      </p>
+      <button id="pendingCloseBtn" class="btn btn-primary btn-block">Tutup</button>
+    </div>
+  </div>
+
+  <!-- ===================== APLIKASI UTAMA ===================== -->
+  <section id="appScreen" class="screen app-screen" hidden>
+
+    <header class="app-header">
+      <div>
+        <p class="eyebrow-small">Pengirim Undangan</p>
+        <h1 class="app-title">Kirim undangan lewat WhatsApp</h1>
+      </div>
+      <button id="logoutBtn" class="btn btn-ghost">Keluar</button>
+    </header>
+
+    <main class="app-grid">
+
+      <!-- PANEL ADMIN (hanya tampil untuk akun admin) -->
+      <section id="adminPanel" class="panel panel-wide admin-panel" hidden aria-labelledby="adminTitle">
+        <div class="panel-head">
+          <h2 id="adminTitle">Kelola pendaftar akun</h2>
+        </div>
+        <p class="panel-desc">Setujui atau tolak akun yang mendaftar untuk memakai aplikasi ini.</p>
+        <div id="adminList"></div>
+      </section>
+
+      <!-- LANGKAH 1 -->
+      <section class="panel" aria-labelledby="step1Title">
+        <div class="panel-head">
+          <span class="step-mark">01</span>
+          <h2 id="step1Title">Unggah daftar tamu</h2>
+        </div>
+        <p class="panel-desc">
+          File Excel (.xlsx / .csv) dengan kolom <strong>Nama</strong> dan <strong>NomorHP</strong> di baris pertama.
+          Mengunggah file baru akan menggantikan daftar tamu sebelumnya.
+        </p>
+
+        <label class="file-drop" id="fileDrop" for="fileInput">
+          <span id="fileDropText">Klik untuk pilih file, atau seret file ke sini</span>
+        </label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden />
+
+        <button id="downloadTemplateBtn" class="btn btn-link">Unduh contoh format (.csv)</button>
+
+        <div id="contactSummary" class="contact-summary" hidden></div>
+        <div id="contactTableWrap" class="contact-table-wrap"></div>
+      </section>
+
+      <!-- LANGKAH 2 -->
+      <section class="panel" aria-labelledby="step2Title">
+        <div class="panel-head">
+          <span class="step-mark">02</span>
+          <h2 id="step2Title">Susun kalimat</h2>
+        </div>
+
+        <div class="field">
+          <label for="pembuka">Kalimat pembuka</label>
+          <textarea id="pembuka" rows="5" placeholder="Assalamu'alaikum {nama}, dengan penuh sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara pernikahan kami..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="penutup">Kalimat penutup</label>
+          <textarea id="penutup" rows="5" placeholder="Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila {nama} berkenan hadir. Terima kasih."></textarea>
+        </div>
+
+        <p class="hint-text">Gunakan <code>{nama}</code> di mana pun — akan diganti otomatis dengan nama tiap tamu. Tersimpan otomatis ke akunmu.</p>
+        <p id="saveStatus" class="hint-text"></p>
+      </section>
+
+      <!-- LANGKAH 3 -->
+      <section class="panel panel-wide" aria-labelledby="step3Title">
+        <div class="panel-head">
+          <span class="step-mark">03</span>
+          <h2 id="step3Title">Kirim satu per satu</h2>
+        </div>
+        <p class="panel-desc">
+          Setiap tombol membuka WhatsApp dengan nomor dan pesan yang sudah terisi otomatis — kamu tinggal menekan kirim di WhatsApp.
+          Status "sudah terkirim" tersimpan di akunmu, jadi aman walau ganti perangkat.
+        </p>
+
+        <div id="sendProgress" class="send-progress" hidden>
+          <div class="send-progress-bar"><div id="sendProgressFill" class="send-progress-fill"></div></div>
+          <p id="sendProgressText" class="send-progress-text"></p>
+        </div>
+
+        <div id="sendList" class="send-list">
+          <p class="empty-state">Belum ada daftar tamu. Unggah file di langkah 1 dulu.</p>
+        </div>
+      </section>
+
+    </main>
+  </section>
+
+  <!-- SheetJS untuk membaca file Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Firebase SDK (compat, supaya bisa dipakai langsung tanpa build tool) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- EmailJS untuk mengirim notifikasi email saat akun disetujui -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
