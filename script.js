@@ -445,11 +445,11 @@ function renderContactSummary() {
 // ---------- UNDUH CONTOH FORMAT ----------
 downloadTemplateBtn.addEventListener('click', () => {
   const data = [
-    { No: 1, Nama: 'Budi Santoso', NomorHP: '081234567890' },
-    { No: 2, Nama: 'Siti Aminah', NomorHP: '6281298765432' }
+    { No: 1, Nama: 'Budi Santoso', NomorHP: '081234567890', 'Link Undangan': 'https://undanganku.com/budi' },
+    { No: 2, Nama: 'Siti Aminah', NomorHP: '6281298765432', 'Link Undangan': 'https://undanganku.com/siti' }
   ];
   const worksheet = XLSX.utils.json_to_sheet(data);
-  worksheet['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 16 }]; // lebar kolom biar rapi
+  worksheet['!cols'] = [{ wch: 5 }, { wch: 22 }, { wch: 16 }, { wch: 32 }]; // lebar kolom biar rapi
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Tamu');
   XLSX.writeFile(workbook, 'contoh-daftar-tamu.xlsx');
