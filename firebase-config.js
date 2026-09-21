@@ -1,6 +1,4 @@
 
-import { initializeApp } from "firebase/app";
-
 const firebaseConfig = {
   apiKey: "AIzaSyASlJUJzittrV9YvwmspwheAIEODlDZpNg",
   authDomain: "aplikasi-blast-wa.firebaseapp.com",
@@ -9,4 +7,5 @@ const firebaseConfig = {
   messagingSenderId: "815384392772",
   appId: "1:815384392772:web:e6188162b303a4f43df811"
 };
-const app = initializeApp(firebaseConfig);
+
+const ADMIN_EMAIL = "dpermana3008@gmail.com";
