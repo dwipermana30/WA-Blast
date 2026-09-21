@@ -1,15 +1,4 @@
-/* ============ TOKEN DESAIN ============
-   Warna:
-   --ivory        : latar utama, hangat & lembut
-   --surface      : latar kartu/panel
-   --ink          : warna teks utama
-   --ink-soft     : teks sekunder
-   --sage         : warna utama (tombol, aksen)
-   --sage-dark    : hover/aktif dari sage
-   --rose         : aksen kedua (progress, sorot)
-   --gold         : garis pembatas halus
-   --border       : garis tepi standar
-*/
+
 :root {
   --ivory: #FAF6F0;
   --surface: #FFFFFF;
@@ -313,6 +302,9 @@ th { color: var(--ink-soft); font-weight: 600; font-size: 12.5px; }
   justify-content: center;
   padding: 20px;
   z-index: 999;
+}
+.modal-overlay[hidden] {
+  display: none;
 }
 .modal-card {
   width: 100%;
