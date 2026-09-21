@@ -402,7 +402,7 @@ async function uploadContactsToFirestore(parsed) {
     const batch = db.batch();
     chunk.forEach((c) => {
       const ref = contactsRef.doc();
-      batch.set(ref, { nama: c.nama, nomor: c.nomor, sent: false });
+           batch.set(ref, { nama: c.nama, nomor: c.nomor, link: c.link || '', sent: false });
     });
     await batch.commit();
   }
@@ -431,9 +431,9 @@ function renderContactSummary() {
   contactSummary.hidden = false;
   contactSummary.innerHTML = `Ada <strong>${contacts.length}</strong> tamu tersimpan di akunmu.`;
 
-  let html = '<table><thead><tr><th>Nama</th><th>Nomor HP</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Nama</th><th>Nomor HP</th><th>Link Undangan</th></tr></thead><tbody>';
   contacts.slice(0, 8).forEach((c) => {
-    html += `<tr><td>${escapeHtml(c.nama)}</td><td>${escapeHtml(c.nomor)}</td></tr>`;
+    html += `<tr><td>${escapeHtml(c.nama)}</td><td>${escapeHtml(c.nomor)}</td><td>${escapeHtml(c.link || '-')}</td></tr>`;
   });
   html += '</tbody></table>';
   if (contacts.length > 8) {
@@ -466,16 +466,18 @@ function normalizePhoneNumber(raw) {
   return digits;
 }
 
-function buildMessage(nama) {
+function buildMessage(nama, link) {
   const pembuka = pembukaInput.value.trim();
   const penutup = penutupInput.value.trim();
   const combined = `${pembuka}\n\n${penutup}`;
-  return combined.replace(/\{nama\}/g, nama);
+  return combined
+    .replace(/\{nama\}/g, nama)
+    .replace(/\{link\}/g, link || '');
 }
 
-function buildWaLink(nomor, nama) {
+function buildWaLink(nomor, nama, link) {
   const number = normalizePhoneNumber(nomor);
-  const text = encodeURIComponent(buildMessage(nama));
+  const text = encodeURIComponent(buildMessage(nama, link));
   return `https://wa.me/${number}?text=${text}`;
 }
 
@@ -525,7 +527,7 @@ function renderSendList() {
         alert('Isi dulu kalimat pembuka dan penutup di langkah 2.');
         return;
       }
-      sendBtn.href = buildWaLink(contact.nomor, contact.nama);
+      sendBtn.href = buildWaLink(contact.nomor, contact.nama, contact.link);
       markAsSent(contact.id, true);
     });
 
